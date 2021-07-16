@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
 
-const { DB_HOST, PORT = 3000 } = process.env;
+const { DB_HOST, PORT } = process.env;
 
 mangoose
   .connect(DB_HOST, {
