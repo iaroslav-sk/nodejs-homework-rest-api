@@ -2,6 +2,8 @@ const User = require("../../models/schemas/userSchema");
 const bcrypt = require("bcrypt");
 const HTTP_CODES = require("../../../../helpers/httpStatusCodes");
 
+const md5 = require("md5");
+
 const register = async (req, res, next) => {
   const { email, password } = req.body;
   try {
@@ -16,9 +18,21 @@ const register = async (req, res, next) => {
     const salt = bcrypt.genSaltSync(15);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
-    const newUser = await User.create({ email, password: hashedPassword });
+    const address = String(email).trim().toLowerCase();
 
-    res.status(HTTP_CODES.CREATED).json({ email, password: newUser.password });
+    const hash = md5(address);
+
+    const avatarURL = `https://www.gravatar.com/avatar/${hash}`;
+
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      avatarURL,
+    });
+
+    res
+      .status(HTTP_CODES.CREATED)
+      .json({ email, password: newUser.password, avatarURL });
   } catch (error) {
     res.status(HTTP_CODES.BAD_REQUEST).json({ error: error.message });
   }

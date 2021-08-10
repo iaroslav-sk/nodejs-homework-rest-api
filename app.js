@@ -25,7 +25,10 @@ const api = require("./routes/api/index");
 
 app.use(cors());
 app.use(express.json());
+
+app.use(express.static("public"));
 app.use("/api/v1/auth", api.auth);
+app.use("/users", api.avatars);
 
 app.use("/api/v1/contacts", api.contacts);
 
@@ -36,6 +39,7 @@ app.use((req, res) => {
     message: "Not found",
   });
 });
+
 app.use((err, req, res, next) => {
   const { code = 500, message = "Server error" } = err;
   res.status(500).json({
