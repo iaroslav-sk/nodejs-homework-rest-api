@@ -1,8 +1,9 @@
 const User = require("../../models/schemas/userSchema");
 const bcrypt = require("bcrypt");
 const HTTP_CODES = require("../../../../helpers/httpStatusCodes");
-
+const { uuid } = require("uuidv4");
 const md5 = require("md5");
+const sendMail = require("../../sgMail/sendGrid");
 
 const register = async (req, res, next) => {
   const { email, password } = req.body;
@@ -24,10 +25,19 @@ const register = async (req, res, next) => {
 
     const avatarURL = `https://www.gravatar.com/avatar/${hash}`;
 
+    const verifyToken = uuid();
+
+    sendMail(
+      email,
+      "This is a verify message!",
+      "Please accept your email",
+      `<h2>/users/verify/${verifyToken}</h2>`
+    );
     const newUser = await User.create({
       email,
       password: hashedPassword,
       avatarURL,
+      verifyToken,
     });
 
     res
