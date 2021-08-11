@@ -12,6 +12,12 @@ const login = async (req, res, next) => {
         .status(HTTP_CODES.UNAUTHORIZED)
         .json({ error: "Wrong credentials" });
     }
+    if (!candidate.verify) {
+      return res
+        .status(HTTP_CODES.BAD_REQUEST)
+        .json({ error: "User is not verify" });
+    }
+
     const isPasswordCorrect = bcrypt.compareSync(password, candidate.password);
     if (!isPasswordCorrect) {
       return res
